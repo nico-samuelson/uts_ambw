@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
+import 'package:uts_ambw/components/bottom_navbar.dart';
+import 'package:uts_ambw/components/horizontal_list_section.dart';
+import 'package:uts_ambw/components/input_border.dart';
+import 'package:faker/faker.dart';
+import 'package:uts_ambw/pages/detail.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,13 +16,54 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    var faker = Faker();
+
+    final List<Map<String, String>> popular = List.generate(
+        10,
+        (index) => {
+              'name': faker.food.restaurant(),
+              'image': faker.image.image(),
+              'address': faker.address.streetAddress(),
+              'category': "${faker.food.cuisine()}, ${faker.address.country()}",
+            });
+
+    final List<Map<String, String>> deals = List.generate(
+        10,
+        (index) => {
+              'name': faker.food.dish(),
+              'image': faker.image.image(),
+              'address': faker.address.streetAddress(),
+              'category': "${faker.food.cuisine()}, ${faker.address.country()}",
+            });
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.white, background: Colors.grey.shade100),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.white,
+            selectedItemColor: Colors.amber,
+            showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            unselectedItemColor: Colors.grey.shade500,
+            unselectedLabelStyle: TextStyle(color: Colors.grey.shade500),
+            elevation: 0.0,
+          ),
           useMaterial3: true,
         ),
+        routes: {
+          'popular': (context) => DetailPage(
+                data: popular,
+                title: "Most Popular",
+              ),
+          'deals': (context) => DetailPage(
+                data: deals,
+                title: "Meal Deals",
+              ),
+        },
         home: Scaffold(
             appBar: AppBar(
               title: const Text(
@@ -31,64 +75,23 @@ class MyApp extends StatelessWidget {
                   Icons.arrow_back,
                   color: Colors.amber,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              onTap: (value) => {},
-              iconSize: 36.0,
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: Colors.amber,
-              showUnselectedLabels: true,
-              unselectedItemColor: Colors.grey.shade500,
-              unselectedLabelStyle: TextStyle(color: Colors.grey.shade500),
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.home_outlined,
-                    color: Colors.amber,
-                  ),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.location_on_outlined,
-                  ),
-                  label: 'Discovery',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.bookmark_outline,
-                  ),
-                  label: 'Bookmark',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.trending_up_outlined,
-                  ),
-                  label: 'Top Foodie',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.person_outline_rounded,
-                  ),
-                  label: 'Profile',
-                ),
-              ],
-            ),
-            body: ListView(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              surfaceTintColor: Colors.white,
+              // Search bar
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(70.0),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 20.0, right: 20.0, bottom: 16.0),
                   child: TextField(
-                    enabled: false,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.all(8.0),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.grey.shade300, width: 1.0),
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
+                      focusColor: Colors.amber.shade600,
+                      focusedBorder: inputBorder(true),
+                      enabledBorder: inputBorder(false),
                       prefixIcon: Icon(
                         Icons.search,
                         color: Colors.grey.shade500,
@@ -97,6 +100,15 @@ class MyApp extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              centerTitle: true,
+            ),
+            bottomNavigationBar: const BottomNavbar(),
+            body: ListView(
+              padding: const EdgeInsets.only(bottom: 80.0),
+              scrollDirection: Axis.vertical,
+              children: [
+                // Hero Post
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Stack(
@@ -104,10 +116,12 @@ class MyApp extends StatelessWidget {
                     alignment: Alignment.bottomCenter,
                     children: [
                       SizedBox(
-                        height: 230,
+                        height: kIsWeb
+                            ? MediaQuery.of(context).size.height / 2
+                            : MediaQuery.of(context).size.height / 3,
                         width: MediaQuery.of(context).size.width,
                         child: const Image(
-                          image: AssetImage('lib/images/image.png'),
+                          image: AssetImage('images/hero.jpg'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -129,7 +143,7 @@ class MyApp extends StatelessWidget {
                               horizontal: 24.0, vertical: 12.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Column(children: [
                                 Text(
@@ -143,7 +157,8 @@ class MyApp extends StatelessWidget {
                               ]),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+
+                                  // crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -153,6 +168,39 @@ class MyApp extends StatelessWidget {
                                         color: Colors.white,
                                       ),
                                     ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: Container(
+                                        height: 10,
+                                        width: 10,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: Container(
+                                        height: 10,
+                                        width: 10,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: Container(
+                                        height: 10,
+                                        width: 10,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
                                   ]),
                             ],
                           ),
@@ -160,8 +208,19 @@ class MyApp extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
+                ),
+                HorizontalListSection(
+                  title: "Most Popular",
+                  detailRoute: "popular",
+                  data: popular,
+                ),
+                HorizontalListSection(
+                  title: "Meal Deals",
+                  detailRoute: "deals",
+                  data: deals,
+                ),
               ],
             )));
   }
 }
+
