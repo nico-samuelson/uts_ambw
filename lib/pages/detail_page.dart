@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:uts_ambw/components/app_bar.dart';
 import 'package:uts_ambw/components/bottom_navbar.dart';
@@ -36,7 +37,10 @@ class DetailPage extends StatelessWidget {
             delegate: SliverChildListDelegate(
               [
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: kIsWeb
+                      ? const EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 100.0)
+                      : const EdgeInsets.all(16.0),
                   child: Column(
                     children: data.map((d) {
                       return BigCard(data: d);

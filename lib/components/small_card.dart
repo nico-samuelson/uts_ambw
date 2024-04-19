@@ -40,6 +40,7 @@ class SmallCard extends StatelessWidget {
               child: Image(
                 image: NetworkImage(data['image'] ?? faker.image.image()),
                 fit: BoxFit.cover,
+                width: double.infinity,
                 height: 150,
               ),
             ),

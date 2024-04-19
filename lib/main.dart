@@ -20,8 +20,10 @@ class MyApp extends StatelessWidget {
         10,
         (index) => {
               'name': faker.food.restaurant(),
-              'image': faker.image
-                  .image(random: true, keywords: ['food', 'restaurants']),
+              'image': faker.image.image(
+                  random: true,
+                  width: MediaQuery.of(context).size.width.toInt(),
+                  keywords: ['food', 'restaurants']),
               'address':
                   "${faker.randomGenerator.integer(1000, min: 1)} ${faker.address.streetName()}",
               'category':
@@ -32,8 +34,11 @@ class MyApp extends StatelessWidget {
         10,
         (index) => {
               'name': faker.food.dish(),
-              'image': faker.image
-                  .image(random: true, keywords: ['food', 'restaurants']),
+              'image': faker.image.image(
+                random: true,
+                keywords: ['food', 'restaurants'],
+                width: MediaQuery.of(context).size.width.toInt(),
+              ),
               'address':
                   "${faker.randomGenerator.integer(1000, min: 1)} ${faker.address.streetName()}",
               'category':
@@ -86,4 +91,3 @@ class MyApp extends StatelessWidget {
         home: HomePage(popular: popular, deals: deals));
   }
 }
-

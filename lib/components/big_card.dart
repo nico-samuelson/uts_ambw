@@ -23,7 +23,11 @@ class BigCard extends StatelessWidget {
           ClipRRect(
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-            child: Image.network(data['image'] ?? faker.image.image()),
+            child: Image.network(
+              data['image'] ?? faker.image.image(),
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(
